@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Adaptive website. Pert 1</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+	<script src="https://use.fontawesome.com/0b12c34028.js"></script>
+	<link rel="stylesheet" href="css/main.css" />	
+	<link rel="stylesheet" href="css/fonts.css" />
+</head>
+<body>	
+	<header>
+		<nav>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<div class="title_block">
+							<h1>Find the shortes path</h1>			
+						</div>
+					</div>
+				</div>
+				<div class="top_line"></div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="start">
+				<button class="my_btn btn_md" data-toggle="modal" data-target="#DlModal" aria-hidden="true">start</button>				
+			</div>
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2">
+					<div id="wrapper">
+						<canvas id="grid"></canvas>
+						<h5></h5>   						
+					</div>
+				</div>
+			</div>	
+		</div>		
+	</header>
+	<div class="modal fade" id="DlModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Enter departure and destination coordinates (0.0 to 10.0)</h4>
+				</div>
+				<div class="modal-body">
+					<form action="#" id="Dlform">
+						<input type="text" class="form-control depX" placeholder="departure X">
+						<input type="text" class="form-control depY" placeholder="departure Y">
+						<input type="text" class="form-control destX" placeholder="destenation X">
+						<input type="text" class="form-control destY" placeholder="destenation Y">
+						<input type="submit" value="send" data-dismiss="modal" class="my_btn btn_md btn-block ">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+	<script src="libs/bootstrap/js/bootstrap.min.js"></script>
+	<script src="js/common.js"></script>	
+</body>
+</html>
+
