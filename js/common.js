@@ -1,167 +1,230 @@
 $(document).ready(function() {
 
-		/* Функція перевірки цілих чисел */
+
+	function Popup(options){
+	    this.form = document.querySelector('#Dlform');
+	    this.overlay = document.querySelector('#DlModal');
+	    
+	    var popup = this;
+	    
+	    this.open = function(){
+	        popup.overlay.classList.add('open');
+	        popup.form.classList.add('open');
+	    }
+	    
+	    this.close = function(){
+	        popup.overlay.classList.remove('open');
+	        popup.form.classList.remove('open');
+	    }
+	    
+
+	    document.querySelector('#DlModal .close').onclick = popup.close;
+	};
+	
+	 var p = new Popup();
+    
+    	document.querySelector('.start button').onclick = function(){
+        p.open();
+        console.log(p);
+    };
+
+			/* Функція перевірки цілих чисел */
 		
     function isInteger(num) {  
   		return num == (num ^ 0);   
 	};
 
-	 $('#Dlform .form-control').on('blur', function(){
-	 	var error = false
-	 	if($(this).val() < 0 || $(this).val() > 10 || $(this).val() === '' || isNaN($(this).val())){
-	 		$(this).addClass('err');
-	 		error = true;
-	 	} else {
-	 		$(this).removeClass('err');
-	 	};
-	 	       
-    });
+	var formControl = (document.querySelectorAll('#Dlform .form-control'));
+	for (var i = 0; i < formControl.length; i++) {
+
+		formControl[i].onblur = function(){
+			var error = false;
+			console.log(this.value);
+			if(this.value < 0 || this.value > 10 || this.value === '' || isNaN(this.value)){
+	 			this.classList.add('err');
+	 			error = true;
+	 		} else {
+	 			this.classList.remove('err');
+	 		};
+	 	};		
+	};
 	
-	$('#Dlform input[type=submit]').on('click', function(e){
-		if($('.form-control').hasClass('err')){
-			return false;
+	
+	document.querySelector('#Dlform input[type=submit]').onclick = function(e){
+		for (var i = 0; i < formControl.length; i++) {
+			if (formControl[i].classList.contains('err')){
+				return false;
+			};
 		};
 		var dep = [];
 		var dest = [];
-		dep[0] = $('#Dlform .depX').val(),
-		dep[1] = $('#Dlform .depY').val(),
-		dest[0] = $('#Dlform .destX').val(),
-		dest[1] = $('#Dlform .destY').val();
+		dep[0] = +document.querySelector('#Dlform .depX').value,
+		dep[1] = +document.querySelector('#Dlform .depY').value,
+		dest[0] = +document.querySelector('#Dlform .destX').value,
+		dest[1] = +document.querySelector('#Dlform .destY').value;
 		var street1 = (isInteger(dep[0]) || isInteger(dep[1]));
 		var street2 = (isInteger(dest[0]) || isInteger(dest[1]));
 		console.log(street1, street2);
+		console.log('dep[0] > dest[0] - ' + (dep[0] > dest[0]));
 
 		if (!street1 || !street2){
 			return false;
 		};
-
+		p.close();
 		run(dep, dest); 
-	});
+	};
 
 	function run(dep, dest){
 
-	var wrapper = document.getElementById('wrapper'),
-	canvas = document.getElementById('grid'),
-	context = canvas.getContext('2d'),
-	step = 48,
-	startPoint = dep,
-	endPoint = dest,
-	shortesPath; 		
 
-			/* Розмітка вулиць */			
+		var wrapper = document.getElementById('wrapper'),
+		canvas = document.getElementById('grid'),
+		context = canvas.getContext('2d'),
+		step = 48,
+		startY, endY, startX, endX,
+		shortesPathObj,
+		shortesPath; 
+		 console.log("dep[0]  - " + dep[0], 'dest[0] - ' + dest[0]);
+		    console.log('dep[0] > dest[0] - ' + (dep[0] > dest[0]));   		
 
-	canvas.height = 480;
-	canvas.width = 480;
-	
-	context.strokeStyle = 'cyan';
-	context.strokeRect(0, 0, canvas.width, canvas.height);
+				/* Розмітка вулиць */			
 
-	
-	for (var i = 0; i < canvas.width; i += step) {
-    	context.moveTo(i, 0);
-    	context.lineTo(i, canvas.height);
-    	context.stroke();
-	}
+		canvas.height = 480;
+		canvas.width = 695;	
+		context.strokeStyle = 'cyan';
+		context.strokeRect(100, 0, 480, 480);
 
-	for (var i = 0; i < canvas.height; i += step) {
-	    context.moveTo(0, i);
-	    context.lineTo(canvas.width, i);
-	    context.stroke();
-	}
+		
+		for (var i = 0; i < 480; i += step) {
+	    	context.moveTo(i + 100, 0);
+	    	context.lineTo(i + 100, 480);
+	    	context.stroke();
+		}
 
-			/* Зображення точок маршруту */
+		for (var i = 0; i < 480; i += step) {
+		    context.moveTo(100, i);
+		    context.lineTo(580, i);
+		    context.stroke();
+		}
 
-	context.fillStyle = 'rgba(46, 204, 113,0.4)';
-	context.beginPath();
-    context.arc(startPoint[0] * 48, startPoint[1] * -48 + 480, 10, 0, Math.PI*2, true);
-    context.moveTo(endPoint[0] * 48 + 10, endPoint[1] * -48 + 480);
-    context.arc(endPoint[0] * 48, endPoint[1] * -48 + 480, 10, 0, Math.PI*2, true);
-    context.fill();
-    context.closePath()
+				/* Зображення точок маршруту */
 
-    function Path(){
-    	this.start = startPoint;
-    	this.end = endPoint;
-    	this.firstPoint = [];
-    	this.secondPoint = [];
-    };
+		context.fillStyle = 'rgba(46, 204, 113,0.4)';
+		context.beginPath();
+	    context.arc(dep[0] * 48 + 100, dep[1] * -48 + 480, 10, 0, Math.PI*2, true);
+	    context.moveTo(dest[0] * 48 + 110, dest[1] * -48 + 480);
+	    context.arc(dest[0] * 48 + 100, dest[1] * -48 + 480, 10, 0, Math.PI*2, true);
+	    context.fill();
+	    context.closePath()
 
-    
-    		/* Функція визначення довжини маршруту */
+	    function Path(){
+	    	this.start = dep;
+	    	this.end = dest;
+	    	this.firstPoint = [];
+	    	this.secondPoint = [];
+	    };
 
-	 function length (way) {
-     	var x = Math.abs(way.start[0] - way.firstPoint[0]) + Math.abs(way.firstPoint[0] - way.secondPoint[0]) + Math.abs(way.secondPoint[0] - way.end[0]) +
-     	Math.abs(way.start[1] - way.firstPoint[1]) + Math.abs(way.firstPoint[1] - way.secondPoint[1]) + Math.abs(way.secondPoint[1] - way.end[1]);
-     	return x;
-     };
+	    
+	    		/* Функція визначення довжини маршруту */
+
+		function length (way) {
+	     	var x = Math.abs(way.start[0] - way.firstPoint[0]) + Math.abs(way.firstPoint[0] - way.secondPoint[0]) + Math.abs(way.secondPoint[0] - way.end[0]) +
+	     	Math.abs(way.start[1] - way.firstPoint[1]) + Math.abs(way.firstPoint[1] - way.secondPoint[1]) + Math.abs(way.secondPoint[1] - way.end[1]);
+	     	return x;
+	    };
 
 
-    var firstPath = new Path(); /*Обєкт першого маршруту*/
-    var secondPath = new Path();  /*Обєкт другого маршруту*/
-    	
-    	/*Визначення координат першої транзитної точки*/
-    if(isInteger(startPoint[0])){
-    	firstPath.firstPoint[1] = Math.floor(startPoint[1]);
-    	secondPath.firstPoint[1] = Math.ceil(startPoint[1]); 
-    	firstPath.firstPoint[0] = secondPath.firstPoint[0] = startPoint[0];
+	    var firstPath = new Path(); /*Обєкт першого маршруту*/
+	    var secondPath = new Path();  /*Обєкт другого маршруту*/
+	    	
+	    		/*Визначення координат першої транзитної точки*/
 
-    } else {    	
-    	firstPath.firstPoint[0] = Math.floor(startPoint[0]);
-       	secondPath.firstPoint[0] = Math.ceil(startPoint[0]);   
-       	firstPath.firstPoint[1] = secondPath.firstPoint[1] = startPoint[1];
-    }
-    console.log(secondPath.firstPoint, firstPath.firstPoint);
+	    if(isInteger(dep[0])){
+	    	firstPath.firstPoint[1] = Math.floor(dep[1]);
+	    	secondPath.firstPoint[1] = Math.ceil(dep[1]); 
+	    	firstPath.firstPoint[0] = secondPath.firstPoint[0] = dep[0];
 
-     		/*Визначення координат другої транзитної точки*/
-     if(isInteger(endPoint[0])){
-     	firstPath.secondPoint[0] = secondPath.secondPoint[0] = endPoint[0];
-     	firstPath.secondPoint[1] = firstPath.firstPoint[1];
-     	secondPath.secondPoint[1] = secondPath.firstPoint[1];
-     
-     } else {
-     	firstPath.secondPoint[1] = secondPath.secondPoint[1] = endPoint[1];
-     	firstPath.secondPoint[0] = firstPath.firstPoint[0];
-     	secondPath.secondPoint[0] = secondPath.firstPoint[0];
-     }
+	    } else {    	
+	    	firstPath.firstPoint[0] = Math.floor(dep[0]);
+	       	secondPath.firstPoint[0] = Math.ceil(dep[0]);   
+	       	firstPath.firstPoint[1] = secondPath.firstPoint[1] = dep[1];
+	    }
+	    console.log(secondPath.firstPoint, firstPath.firstPoint);
 
-     		/* Визначення найкоротшого маршруту */
-     
-     shortesPath = (length(firstPath) > length(secondPath)) ? secondPath : firstPath;
+	    		/*Визначення координат другої транзитної точки*/
 
-     		/*Зображення маршруту*/
+	    if(isInteger(dest[0])){
+	    	firstPath.secondPoint[0] = secondPath.secondPoint[0] = dest[0];
+	     	firstPath.secondPoint[1] = firstPath.firstPoint[1];
+	     	secondPath.secondPoint[1] = secondPath.firstPoint[1];
+	     
+	    } else {
+	     	firstPath.secondPoint[1] = secondPath.secondPoint[1] = dest[1];
+	     	firstPath.secondPoint[0] = firstPath.firstPoint[0];
+	     	secondPath.secondPoint[0] = secondPath.firstPoint[0];
+	    };
 
-     	context.beginPath();
-     	context.lineWidth = 4;
-     	context.strokeStyle = 'red';
-     	context.moveTo(startPoint[0] * 48, startPoint[1] * -48 + 480);
-	    context.lineTo(shortesPath.firstPoint[0] * 48, shortesPath.firstPoint[1] * -48 + 480);
-	    context.lineTo(shortesPath.secondPoint[0] * 48, shortesPath.secondPoint[1] * -48 + 480);
-	    context.lineTo(endPoint[0] * 48, endPoint[1] * -48 + 480);
-	    context.stroke();
+	    		/* Визначення обєкту найкоротшого маршруту */
 
-	    	/* Підписи координат початку і кінця маршруту */
+	    shortesPathObj = (length(firstPath) > length(secondPath)) ? secondPath : firstPath;
+			
+	 			/*Зображення маршруту*/
+
+	 	if(dep[0] === dest[0] || (dep[1] === dest[1])){
+		    context.beginPath();
+		 	context.lineWidth = 4;
+		 	context.strokeStyle = 'red';
+		 	context.moveTo(dep[0] * 48 + 100, dep[1] * -48 + 480);
+		    context.lineTo(dest[0] * 48 + 100, dest[1] * -48 + 480);
+		    context.stroke();
+	    } else {
+		 	context.beginPath();
+		 	context.lineWidth = 4;
+		 	context.strokeStyle = 'red';
+		 	context.moveTo(dep[0] * 48 + 100, dep[1] * -48 + 480);
+		    context.lineTo(shortesPathObj.firstPoint[0] * 48 + 100, shortesPathObj.firstPoint[1] * -48 + 480);
+		    context.lineTo(shortesPathObj.secondPoint[0] * 48 + 100, shortesPathObj.secondPoint[1] * -48 + 480);
+		    context.lineTo(dest[0] * 48 + 100, dest[1] * -48 + 480);
+		    context.stroke();
+		};    
+
+	    		/* Підписи координат початку і кінця маршруту */
 
 	    context.fillStyle = "#fff";
 	    context.font = 'italic 25px sans-serif';
-	    if (startPoint[0] > endPoint[0]){
+	    console.log(dep,dest);
+	    startY = (dep[1] > 9.2) ? 9.2 : dep[1];
+	    endY = (dest[1] > 9.2) ? 9.2 : dest[1];
+	     console.log(dep,dest);
+	    if (dep[0] > dest[0]){
 	    	context.textAlign = "left";
-	    	context.fillText("(" + startPoint[0] + ", " + startPoint[1] + ")", startPoint[0] * 48 + 15, startPoint[1] * -48 + 480);
+	    	context.fillText("(" + dep[0] + ", " + dep[1] + ")", dep[0] * 48 + 115, startY * -48 + 470);
 	    } else {
 	    	context.textAlign = "right";
-	    	context.fillText("(" + startPoint[0] + ", " + startPoint[1] + ")", startPoint[0] * 48 - 15, startPoint[1] * -48 + 480);
+	    	context.fillText("(" + dep[0] + ", " + dep[1] + ")", dep[0] * 48 + 85, startY * -48 + 470);
 	    };
-	    if (startPoint[0] <= endPoint[0]){
+	    if (dep[0] <= dest[0]){
 	    	context.textAlign = "left";
-	    	context.fillText("(" + endPoint[0] + ", " + endPoint[1] + ")", endPoint[0] * 48 + 15, endPoint[1] * -48 + 480);
+	    	context.fillText("(" + dest[0] + ", " + dest[1] + ")", dest[0] * 48 + 115, endY * -48 + 470);
 	    } else {
 	    	context.textAlign = "right";
-	    	context.fillText("(" + endPoint[0] + ", " + endPoint[1] + ")", endPoint[0] * 48 - 15, endPoint[1] * -48 + 480);
+	    	context.fillText("(" + dest[0] + ", " + dest[1] + ")", dest[0] * 48 + 85, endY * -48 + 470);
 
-	    };	    
+	    };	
 
-	    $("header h5").html('The shortest path is ' + length(shortesPath));
-	    $(".start button").html('Try again');
+	    		/* Визначення найкоротшого маршруту */ 
 
-	    console.log(length(shortesPath));
+	    if(dep[0] === dest[0]){
+	    	shortesPath = Math.abs(dep[1] - dest[1]).toFixed(1);
+	    	console.log('(dep[1] - dest[1]) - ' + (dep[1] - dest[1]));
+	    } else if(dep[1] === dest[1]){
+	    	shortesPath = Math.abs(dep[0] - dest[0]).toFixed(1);	
+		} else{
+			shortesPath = length(shortesPathObj).toFixed(1);
+		};   
+
+	    document.querySelector("header h5").innerHTML = ('The shortest path is <span>' + shortesPath + '</span>');
+	    document.querySelector(".start button").innerHTML = ('Try again');
+   
 	};
 });
