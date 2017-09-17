@@ -55,6 +55,11 @@ header h5{
 	font-family: 'RalewayRegular', sans-serif;
 	font-size: 30px;
 }
+header h5 span {
+	color: red;
+    font-size: 32px;
+    font-weight: bold;
+}
 
 .menu{
 	list-style-type: none;
@@ -82,6 +87,10 @@ header h5{
 	font-size: 18px;
 	margin-bottom: 50px;
 }
+#wrapper canvas{
+	width: 100%;		
+}
+
 
 /* FIELD SECTION */
 
@@ -101,6 +110,8 @@ header h5{
 #Dlform{
 	width: 70%;
 	margin: 0 auto;
+	display: none;
+	background-color: rgba(0 0 0 0.5);
 }
 #Dlform input{
 	margin-top: 15px;
@@ -108,6 +119,20 @@ header h5{
 .err{
 	outline: 1px solid red; 
 }
+.open{
+	display: block !important;
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+	header h5{
+		font-size: 25px;
+	}
+	.title_block h1{
+		font-size: 32px;
+	}
+}
+
 
 
 
